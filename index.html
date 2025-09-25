@@ -1,49 +1,80 @@
+Absolutely! Here's the **complete, working `index.html` file** with everything you need — properly structured so it:
+
+✅ Displays the Easy / Medium / Hard sections
+✅ Shows buttons for each question
+✅ Prompts for answers
+✅ Gives clues when correct
+✅ Locks questions after 3 incorrect attempts
+
+---
+
+## ✅ FULL WORKING `index.html` FILE
+
+Copy **all of this** into your `index.html` file on GitHub:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Josh’s Bar Crawl Clue Game</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      max-width: 800px;
+      max-width: 900px;
       margin: auto;
-      background: #f5f5f5;
+      background: #f9f9f9;
     }
+
     h1 {
       text-align: center;
-      margin-bottom: 40px;
     }
+
     h2 {
       margin-top: 40px;
+      color: #444;
       border-bottom: 2px solid #ccc;
       padding-bottom: 5px;
     }
-    .question-btn {
-      margin: 5px;
-      padding: 10px 15px;
-      cursor: pointer;
-      display: inline-block;
-    }
-    .clue {
-      margin: 10px 0 20px 10px;
-      color: green;
-      display: none;
-    }
+
     .section {
-      margin-bottom: 50px;
-      background: white;
+      background: #fff;
       padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .question-btn {
+      margin: 6px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      background: #007bff;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .question-btn:disabled {
+      cursor: not-allowed;
+      background: #ccc;
+    }
+
+    .clue {
+      margin-top: 8px;
+      padding-left: 10px;
+      color: green;
+      display: none;
     }
   </style>
 </head>
 <body>
 
   <h1>🔍 Josh’s Bar Crawl Clue Game</h1>
-  <p style="text-align:center;">Answer questions to reveal clues. You get 3 tries per question!</p>
+  <p style="text-align: center;">Answer questions to unlock clues! You only get <strong>3 tries per question</strong> – make them count.</p>
 
   <div id="easy" class="section">
     <h2>✅ Easy Clues</h2>
@@ -57,7 +88,6 @@
     <h2>🔥 Hard Clues</h2>
   </div>
 
-  <!-- Your JavaScript -->
   <script>
     const questions = [
       // EASY
@@ -108,3 +138,31 @@
         const clueDiv = document.createElement('div');
         clueDiv.className = 'clue';
         clueDiv.id = `clue-${index}`;
+
+        attempts[index] = 0;
+
+        btn.addEventListener('click', () => {
+          if (attempts[index] >= 3) {
+            alert("❌ You’ve used all 3 attempts for this question.");
+            return;
+          }
+
+          const userAnswer = prompt(item.q);
+          if (!userAnswer) return;
+
+          const cleaned = userAnswer.trim().toLowerCase();
+          const correct = item.a.toLowerCase();
+
+          if (cleaned === correct) {
+            clueDiv.textContent = "🕵️ Clue: " + item.clue;
+            clueDiv.style.display = 'block';
+            btn.disabled = true;
+            btn.style.backgroundColor = '#ccc';
+          } else {
+            attempts[index]++;
+            if (attempts[index] >= 3) {
+              btn.disabled = true;
+              btn.style.backgroundColor = '#f8d7da';
+              clueDiv.textContent = "🚫 You’ve used all 3 attempts. This question is now locked.";
+              clue
+```

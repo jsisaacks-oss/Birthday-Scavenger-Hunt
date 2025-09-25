@@ -110,25 +110,51 @@
       { level: "hard", q: "Josh’s Favorite Seasonal Drink", a: "eggnog", clue: "The bar has games" },
     ];
 
+    // Load saved progress or start fresh
+    const progress = JSON.parse(localStorage.getItem("barcrawl-progress") || "{}");
+
+    function saveProgress() {
+      localStorage.setItem("barcrawl-progress", JSON.stringify(progress));
+    }
+
     function renderQuestions() {
       const levels = { easy: "easy", medium: "medium", hard: "hard" };
-      const attempts = {};
+      const counters = { easy: 1, medium: 1, hard: 1 };
 
       questions.forEach((item, index) => {
         const section = document.getElementById(levels[item.level]);
 
         const btn = document.createElement('button');
-        btn.textContent = `Question ${index + 1}`;
+        btn.textContent = `Question ${counters[item.level]++}`;
         btn.className = 'question-btn';
 
         const clueDiv = document.createElement('div');
         clueDiv.className = 'clue';
         clueDiv.id = `clue-${index}`;
 
-        attempts[index] = 0;
+        // Ensure progress tracking
+        if (!(index in progress)) {
+          progress[index] = { attempts: 0, solved: false, locked: false };
+        }
+
+        const state = progress[index];
+        if (state.solved) {
+          clueDiv.textContent = "🕵️ Clue: " + item.clue;
+          clueDiv.style.display = 'block';
+          btn.disabled = true;
+          btn.style.backgroundColor = '#ccc';
+        } else if (state.locked) {
+          clueDiv.textContent = "🚫 You’ve used all 3 attempts. This question is now locked.";
+          clueDiv.style.color = "red";
+          clueDiv.style.display = 'block';
+          btn.disabled = true;
+          btn.style.backgroundColor = '#f8d7da';
+        }
 
         btn.addEventListener('click', () => {
-          if (attempts[index] >= 3) {
+          if (state.locked || state.solved) return;
+
+          if (state.attempts >= 3) {
             alert("❌ You’ve used all 3 attempts for this question.");
             return;
           }
@@ -140,32 +166,38 @@
           const correct = item.a.toLowerCase();
 
           if (cleaned === correct) {
+            state.solved = true;
             clueDiv.textContent = "🕵️ Clue: " + item.clue;
             clueDiv.style.display = 'block';
             btn.disabled = true;
             btn.style.backgroundColor = '#ccc';
           } else {
-            attempts[index]++;
-            if (attempts[index] >= 3) {
+            state.attempts++;
+            if (state.attempts >= 3) {
+              state.locked = true;
               btn.disabled = true;
               btn.style.backgroundColor = '#f8d7da';
               clueDiv.textContent = "🚫 You’ve used all 3 attempts. This question is now locked.";
               clueDiv.style.color = "red";
               clueDiv.style.display = 'block';
             } else {
-              alert(`❌ Incorrect answer. ${3 - attempts[index]} attempt(s) remaining.`);
+              alert(`❌ Incorrect answer. ${3 - state.attempts} attempt(s) remaining.`);
             }
           }
+          saveProgress();
         });
 
         section.appendChild(btn);
         section.appendChild(clueDiv);
       });
+
+      // Save initial structure
+      saveProgress();
     }
 
-    // ✅ Call the function AFTER the page loads
     renderQuestions();
   });
 </script>
+
 </body>
 </html>

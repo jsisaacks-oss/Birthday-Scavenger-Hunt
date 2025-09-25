@@ -1,203 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Josh’s Bar Crawl Clue Game</title>
+  <meta charset="UTF-8">
+  <title>Josh's Bar Crawl Trivia</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f5f5f5;
+      margin: 0;
       padding: 20px;
-      max-width: 900px;
-      margin: auto;
-      background: #f9f9f9;
     }
-
-    h1 {
+    .section-title {
+      margin-top: 40px;
+      font-size: 1.6em;
+      text-decoration: underline;
+    }
+    .question {
+      margin: 20px auto;
+      padding: 15px;
+      background: white;
+      border-radius: 8px;
+      max-width: 700px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    .question h3 {
+      margin-top: 0;
+    }
+    #final-reveal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: black;
+      color: white;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
       text-align: center;
     }
-
-    h2 {
-      margin-top: 40px;
-      color: #444;
-      border-bottom: 2px solid #ccc;
-      padding-bottom: 5px;
+    #final-reveal h1 {
+      font-size: 3em;
+      animation: flash 1s infinite;
     }
-
-    .section {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      margin-top: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    @keyframes flash {
+      0% { color: white; }
+      50% { color: gold; }
+      100% { color: white; }
     }
-
-    .question-btn {
-      margin: 6px;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 4px;
-      background: #007bff;
-      color: white;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .question-btn:disabled {
-      cursor: not-allowed;
-      background: #ccc;
-    }
-
-    .clue {
-      margin-top: 8px;
-      padding-left: 10px;
-      color: green;
-      display: none;
+    canvas#confetti {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 10000;
     }
   </style>
 </head>
 <body>
 
-  <h1>🔍 Josh’s Bar Crawl Clue Game</h1>
-  <p style="text-align: center;">Answer questions to unlock clues! You only get <strong>3 tries per question</strong> – make them count.</p>
+  <h1>Josh's Bar Crawl Trivia</h1>
+  <div id="quiz"></div>
+  <button onclick="checkAnswers()">Submit Answers</button>
 
-  <div id="easy" class="section">
-    <h2>✅ Easy Clues</h2>
+  <div id="final-reveal">
+    <canvas id="confetti"></canvas>
+    <h1>🎉 FINAL DESTINATION 🎉</h1>
+    <h1>POUR TAPROOM</h1>
   </div>
 
-  <div id="medium" class="section">
-    <h2>⚠️ Medium Clues</h2>
-  </div>
+  <!-- Victory sound -->
+  <audio id="victory-sound" preload="auto" loop>
+    <source src="https://www.soundjay.com/misc/sounds/fanfare-01.mp3" type="audio/mpeg">
+  </audio>
 
-  <div id="hard" class="section">
-    <h2>🔥 Hard Clues</h2>
-  </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
+  <script>
+    // ==============================
+    // ALL QUESTIONS (EASY / MEDIUM / HARD)
+    // ==============================
     const questions = [
-      // ✅ EASY CLUES
-      { level: "easy", q: "Josh’s Favorite Movie", a: "blue streak", clue: "The bar is not Felix" },
-      { level: "easy", q: "Josh’s Favorite Song", a: "fourfive seconds", clue: "The furthest north we will go in the bar crawl is Pink Bellies" },
-      { level: "easy", q: "Josh’s Current Celebrity Crush", a: "carrie underwood", clue: "The bar is not Ritual or by Calhoun St for that matter" },
-      { level: "easy", q: "Josh’s Favorite Sports University", a: "alabama", clue: "The furthest south we will go in the crawl is Ritual" },
-      { level: "easy", q: "Restaurant with Josh’s Favorite Pizza", a: "evo", clue: "The name of the bar is in the lyrics of one of Rihanna, Hozier, or Leon Bridges’ songs" },
-      { level: "easy", q: "Josh’s Most Played Video Game this Year", a: "fortnite", clue: "The bar has beer" },
-      { level: "easy", q: "African country Josh lived in for 1 month", a: "kenya", clue: "The bar we will begin at is on King St" },
-      { level: "easy", q: "Josh’s Favorite Alabama QB", a: "bryce young", clue: "The bar does not have a history of being racist, although I’d like to go to that place on the crawl" },
+      // EASY
+      { section: "Easy", q: "Josh’s Favorite Movie", a: "Blue Streak" },
+      { section: "Easy", q: "Josh’s Favorite Song", a: "Fourfive Seconds" },
+      { section: "Easy", q: "Josh’s Current Celebrity Crush", a: "Carrie Underwood" },
+      { section: "Easy", q: "Josh’s Favorite Sports University", a: "Alabama" },
+      { section: "Easy", q: "Restaurant with Josh’s Favorite Pizza", a: "Evo" },
+      { section: "Easy", q: "Josh’s Most Played Video Game this Year", a: "Fortnite" },
+      { section: "Easy", q: "African country Josh lived in for 1 month", a: "Kenya" },
+      { section: "Easy", q: "Josh’s Favorite Alabama QB", a: "Bryce Young" },
 
-      // ⚠️ MEDIUM CLUES
-      { level: "medium", q: "Josh’s Second Favorite Movie", a: "21 jump street", clue: "It is not uncommon for Booze Pops to be sold near the entrance to the entrance" },
-      { level: "medium", q: "Josh’s Second Favorite Song", a: "unwritten", clue: "The bar is not the Belmont" },
-      { level: "medium", q: "Josh’s Childhood Celebrity Crush", a: "selena gomez", clue: "One of Josh’s favorite Espresso Martinis is a bar that you can use Blackbird at." },
-      { level: "medium", q: "Josh’s Favorite Professional Team", a: "philadelphia eagles", clue: "If you know where one of Josh’s favorite Espresso Martinis is, the bar you need to go to is setup in a similar fashion" },
-      { level: "medium", q: "Josh’s Second Favorite Pizza Place", a: "mellow mushroom", clue: "Josh went to this bar the same day after running the Kiawah Marathon with Evey" },
-      { level: "medium", q: "Brand of Josh’s Backpack Since the 7th Grade", a: "under armour", clue: "The address of the Bar is a composite, even, and refactorable number" },
-      { level: "medium", q: "European Country Josh lived in for 1 month", a: "latvia", clue: "The Bar has between a 4.3 and 4.7 rating on Google" },
-      { level: "medium", q: "First Name of Josh’s 70 year old friend", a: "gary", clue: "The bar is not Stars" },
+      // MEDIUM
+      { section: "Medium", q: "Josh’s Second Favorite Movie", a: "21 Jump Street" },
+      { section: "Medium", q: "Josh’s Second Favorite Song", a: "Unwritten" },
+      { section: "Medium", q: "Josh’s Childhood Celebrity Crush", a: "Selena Gomez" },
+      { section: "Medium", q: "Josh’s Favorite Professional Team", a: "Philadelphia Eagles" },
+      { section: "Medium", q: "Josh’s Second Favorite Pizza Place", a: "Mellow Mushroom" },
+      { section: "Medium", q: "Brand of Josh’s Backpack Since the 7th Grade", a: "Under Armour" },
+      { section: "Medium", q: "European Country Josh lived in for 1 month", a: "Latvia" },
+      { section: "Medium", q: "First Name of Josh’s 70 year old friend", a: "Gary" },
 
-      // 🔥 HARD CLUES
-      { level: "hard", q: "Josh’s Third Favorite Movie (relates to sleeper celebrity crush)", a: "pitch perfect", clue: "The Bar is on the Opposite Side of the Street from Subway" },
-      { level: "hard", q: "Josh’s Second Favorite Artist", a: "leon bridges", clue: "The Bar serves food but does not have a server" },
-      { level: "hard", q: "Josh’s Sleeper Celebrity Crush", a: "anna kendrick", clue: "The Bar is not Cocktail Club" },
-      { level: "hard", q: "Josh’s Second Favorite Professional Team", a: "los angeles lakers", clue: "The Bar is not Bourbon and Bubbles" },
-      { level: "hard", q: "Josh’s Favorite Pizza at his Second Favorite Pizza Place", a: "pacific rim", clue: "The Bar is not Republic" },
-      { level: "hard", q: "How Many Surgeries did Josh have in High School? (numerical answer)", a: "4", clue: "The bar has only one of the letters that is given to a contestant on the final round of Wheel of Fortune" },
-      { level: "hard", q: "Josh’s Maiden Name", a: "allaire", clue: "The bar has 2 different vowels in the name" },
-      { level: "hard", q: "Josh’s Bench Press 1 Rep Max (requires 2.5 lb plates)", a: "320", clue: "The bar is not Vintage Lounge" },
-      { level: "hard", q: "Number of Guys Josh has Kissed", a: "4", clue: "The bar is not Uptown Social" },
-      { level: "hard", q: "Josh’s Favorite NFL Player", a: "devonta smith", clue: "The bar has a good view" },
-      { level: "hard", q: "Josh’s Favorite Seasonal Drink", a: "eggnog", clue: "The bar has games" },
+      // HARD
+      { section: "Hard", q: "Josh’s Third Favorite Movie (relates to sleeper celebrity crush)", a: "Pitch Perfect" },
+      { section: "Hard", q: "Josh’s Second Favorite Artist", a: "Leon Bridges" },
+      { section: "Hard", q: "Josh’s Sleeper Celebrity Crush", a: "Anna Kendrick" },
+      { section: "Hard", q: "Josh’s Second Favorite Professional Team", a: "Los Angeles Lakers" },
+      { section: "Hard", q: "Josh’s Favorite Pizza at his Second Favorite Pizza Place", a: "Pacific Rim" },
+      { section: "Hard", q: "How Many Surgeries did Josh have in High School?", a: "4" },
+      { section: "Hard", q: "Josh’s Maiden Name", a: "Allaire" },
+      { section: "Hard", q: "Josh’s Bench Press 1 Rep Max (requires 2.5 lb plates)", a: "320" },
+      { section: "Hard", q: "Number of Guys Josh has Kissed", a: "4" },
+      { section: "Hard", q: "Josh’s Favorite NFL Player", a: "Devonta Smith" },
+      { section: "Hard", q: "Josh’s Favorite Seasonal Drink", a: "Eggnog" }
     ];
 
-    // Load saved progress or start fresh
-    const progress = JSON.parse(localStorage.getItem("barcrawl-progress") || "{}");
+    const quizDiv = document.getElementById("quiz");
+    let currentSection = "";
 
-    function saveProgress() {
-      localStorage.setItem("barcrawl-progress", JSON.stringify(progress));
-    }
+    // render questions
+    questions.forEach((item, idx) => {
+      if (item.section !== currentSection) {
+        currentSection = item.section;
+        const secTitle = document.createElement("h2");
+        secTitle.className = "section-title";
+        secTitle.innerText = currentSection + " Clues";
+        quizDiv.appendChild(secTitle);
+      }
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `
+        <h3>${idx+1}. ${item.q}</h3>
+        <input type="text" id="q${idx}">
+      `;
+      quizDiv.appendChild(div);
+    });
 
-    function renderQuestions() {
-      const levels = { easy: "easy", medium: "medium", hard: "hard" };
-      const counters = { easy: 1, medium: 1, hard: 1 };
-
-      questions.forEach((item, index) => {
-        const section = document.getElementById(levels[item.level]);
-
-        const btn = document.createElement('button');
-        btn.textContent = `Question ${counters[item.level]++}`;
-        btn.className = 'question-btn';
-
-        const clueDiv = document.createElement('div');
-        clueDiv.className = 'clue';
-        clueDiv.id = `clue-${index}`;
-
-        // Ensure progress tracking
-        if (!(index in progress)) {
-          progress[index] = { attempts: 0, solved: false, locked: false };
+    // check answers
+    function checkAnswers() {
+      let allCorrect = true;
+      questions.forEach((item, idx) => {
+        const val = document.getElementById("q"+idx).value.trim().toLowerCase();
+        if (val !== item.a.toLowerCase()) {
+          allCorrect = false;
         }
-
-        const state = progress[index];
-        if (state.solved) {
-          clueDiv.textContent = "🕵️ Clue: " + item.clue;
-          clueDiv.style.display = 'block';
-          btn.disabled = true;
-          btn.style.backgroundColor = '#ccc';
-        } else if (state.locked) {
-          clueDiv.textContent = "🚫 You’ve used all 3 attempts. This question is now locked.";
-          clueDiv.style.color = "red";
-          clueDiv.style.display = 'block';
-          btn.disabled = true;
-          btn.style.backgroundColor = '#f8d7da';
-        }
-
-        btn.addEventListener('click', () => {
-          if (state.locked || state.solved) return;
-
-          if (state.attempts >= 3) {
-            alert("❌ You’ve used all 3 attempts for this question.");
-            return;
-          }
-
-          const userAnswer = prompt(item.q);
-          if (!userAnswer) return;
-
-          const cleaned = userAnswer.trim().toLowerCase();
-          const correct = item.a.toLowerCase();
-
-          if (cleaned === correct) {
-            state.solved = true;
-            clueDiv.textContent = "🕵️ Clue: " + item.clue;
-            clueDiv.style.display = 'block';
-            btn.disabled = true;
-            btn.style.backgroundColor = '#ccc';
-          } else {
-            state.attempts++;
-            if (state.attempts >= 3) {
-              state.locked = true;
-              btn.disabled = true;
-              btn.style.backgroundColor = '#f8d7da';
-              clueDiv.textContent = "🚫 You’ve used all 3 attempts. This question is now locked.";
-              clueDiv.style.color = "red";
-              clueDiv.style.display = 'block';
-            } else {
-              alert(`❌ Incorrect answer. ${3 - state.attempts} attempt(s) remaining.`);
-            }
-          }
-          saveProgress();
-        });
-
-        section.appendChild(btn);
-        section.appendChild(clueDiv);
       });
-
-      // Save initial structure
-      saveProgress();
+      if (allCorrect) {
+        triggerFinalReveal();
+      } else {
+        alert("Not quite! Keep trying 🍻");
+      }
     }
 
-    renderQuestions();
-  });
-</script>
+    // dramatic reveal
+    function triggerFinalReveal() {
+      document.body.innerHTML = document.getElementById("final-reveal").outerHTML;
+      document.getElementById("final-reveal").style.display = "flex";
+      startConfetti();
+      document.getElementById("victory-sound").play();
+    }
 
+    // 🎉 Confetti Animation
+    function startConfetti() {
+      const canvas = document.getElementById("confetti");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const confettiCount = 300;
+      const confetti = [];
+      for (let i = 0; i < confettiCount; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * confettiCount,
+          color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+          tilt: Math.floor(Math.random() * 10) - 10
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        confetti.forEach(c => {
+          ctx.beginPath();
+          ctx.fillStyle = c.color;
+          ctx.fillRect(c.x, c.y, c.r, c.r);
+        });
+        update();
+      }
+
+      function update() {
+        confetti.forEach(c => {
+          c.y += Math.cos(c.d) + 1 + c.r / 2;
+          c.x += Math.sin(0.5);
+          if (c.y > canvas.height) {
+            c.y = -10;
+            c.x = Math.random() * canvas.width;
+          }
+        });
+      }
+
+      (function animate() {
+        requestAnimationFrame(animate);
+        draw();
+      })();
+    }
+  </script>
 </body>
 </html>

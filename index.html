@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>10 Questions Game</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .question-btn { margin: 5px; padding: 10px 15px; cursor: pointer; }
+    .clue { margin: 10px 0; color: green; display: none; }
+  </style>
+</head>
+<body>
+
+<h2>🔍 10 Questions, 10 Clues</h2>
+<div id="game"></div>
+
+<script>
+  const questions = [
+    { q: "What is the capital of France?", a: "paris", clue: "Clue 1: It starts with a P." },
+    { q: "What is 2 + 2?", a: "4", clue: "Clue 2: Simple math reveals the number 4." },
+    { q: "What color do you get when you mix red and blue?", a: "purple", clue: "Clue 3: It's royal." },
+    { q: "What's the boiling point of water (°C)?", a: "100", clue: "Clue 4: Triple digits." },
+    { q: "Which planet is known as the Red Planet?", a: "mars", clue: "Clue 5: It's not Earth." },
+    { q: "How many continents are there?", a: "7", clue: "Clue 6: Think globally." },
+    { q: "What's the square root of 81?", a: "9", clue: "Clue 7: A perfect square." },
+    { q: "What gas do plants breathe in?", a: "carbon dioxide", clue: "Clue 8: It's in the air." },
+    { q: "What's the largest mammal?", a: "blue whale", clue: "Clue 9: Oceanic giant." },
+    { q: "How many legs does a spider have?", a: "8", clue: "Clue 10: Not six." },
+  ];
+
+  const gameContainer = document.getElementById('game');
+
+  questions.forEach((item, index) => {
+    const btn = document.createElement('button');
+    btn.textContent = `Question ${index + 1}`;
+    btn.className = 'question-btn';
+
+    const clueDiv = document.createElement('div');
+    clueDiv.className = 'clue';
+    clueDiv.id = `clue-${index}`;
+
+    btn.addEventListener('click', () => {
+      const userAnswer = prompt(item.q);
+      if (userAnswer && userAnswer.trim().toLowerCase() === item.a) {
+        clueDiv.textContent = item.clue;
+        clueDiv.style.display = 'block';
+        btn.disabled = true;
+        btn.style.backgroundColor = '#ccc';
+      } else {
+        alert("Incorrect answer. Try again!");
+      }
+    });
+
+    gameContainer.appendChild(btn);
+    gameContainer.appendChild(clueDiv);
+  });
+</script>
+
+</body>
+</html>

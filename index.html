@@ -76,7 +76,7 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const questions = [
-      // all your questions here (same as before)
+      // ✅ EASY CLUES
       { level: "easy", q: "Josh’s Favorite Movie", a: "blue streak", clue: "The bar is not Felix" },
       { level: "easy", q: "Josh’s Favorite Song", a: "fourfive seconds", clue: "The furthest north we will go in the bar crawl is Pink Bellies" },
       { level: "easy", q: "Josh’s Current Celebrity Crush", a: "carrie underwood", clue: "The bar is not Ritual or by Calhoun St for that matter" },
@@ -85,10 +85,29 @@
       { level: "easy", q: "Josh’s Most Played Video Game this Year", a: "fortnite", clue: "The bar has beer" },
       { level: "easy", q: "African country Josh lived in for 1 month", a: "kenya", clue: "The bar we will begin at is on King St" },
       { level: "easy", q: "Josh’s Favorite Alabama QB", a: "bryce young", clue: "The bar does not have a history of being racist, although I’d like to go to that place on the crawl" },
-      // medium and hard questions continue...
-      { level: "medium", q: "Josh’s Second Favorite Movie", a: "21 jump street", clue: "It is not uncommon for Booze Pops to be sold near the entrance" },
+
+      // ⚠️ MEDIUM CLUES
+      { level: "medium", q: "Josh’s Second Favorite Movie", a: "21 jump street", clue: "It is not uncommon for Booze Pops to be sold near the entrance to the entrance" },
+      { level: "medium", q: "Josh’s Second Favorite Song", a: "unwritten", clue: "The bar is not the Belmont" },
+      { level: "medium", q: "Josh’s Childhood Celebrity Crush", a: "selena gomez", clue: "One of Josh’s favorite Espresso Martinis is a bar that you can use Blackbird at." },
+      { level: "medium", q: "Josh’s Favorite Professional Team", a: "philadelphia eagles", clue: "If you know where one of Josh’s favorite Espresso Martinis is, the bar you need to go to is setup in a similar fashion" },
+      { level: "medium", q: "Josh’s Second Favorite Pizza Place", a: "mellow mushroom", clue: "Josh went to this bar the same day after running the Kiawah Marathon with Evey" },
+      { level: "medium", q: "Brand of Josh’s Backpack Since the 7th Grade", a: "under armour", clue: "The address of the Bar is a composite, even, and refactorable number" },
+      { level: "medium", q: "European Country Josh lived in for 1 month", a: "latvia", clue: "The Bar has between a 4.3 and 4.7 rating on Google" },
+      { level: "medium", q: "First Name of Josh’s 70 year old friend", a: "gary", clue: "The bar is not Stars" },
+
+      // 🔥 HARD CLUES
       { level: "hard", q: "Josh’s Third Favorite Movie (relates to sleeper celebrity crush)", a: "pitch perfect", clue: "The Bar is on the Opposite Side of the Street from Subway" },
-      // (don't forget to include the rest)
+      { level: "hard", q: "Josh’s Second Favorite Artist", a: "leon bridges", clue: "The Bar serves food but does not have a server" },
+      { level: "hard", q: "Josh’s Sleeper Celebrity Crush", a: "anna kendrick", clue: "The Bar is not Cocktail Club" },
+      { level: "hard", q: "Josh’s Second Favorite Professional Team", a: "los angeles lakers", clue: "The Bar is not Bourbon and Bubbles" },
+      { level: "hard", q: "Josh’s Favorite Pizza at his Second Favorite Pizza Place", a: "pacific rim", clue: "The Bar is not Republic" },
+      { level: "hard", q: "How Many Surgeries did Josh have in High School? (numerical answer)", a: "4", clue: "The bar has only one of the letters that is given to a contestant on the final round of Wheel of Fortune" },
+      { level: "hard", q: "Josh’s Maiden Name", a: "allaire", clue: "The bar has 2 different vowels in the name" },
+      { level: "hard", q: "Josh’s Bench Press 1 Rep Max (requires 2.5 lb plates)", a: "320", clue: "The bar is not Vintage Lounge" },
+      { level: "hard", q: "Number of Guys Josh has Kissed", a: "4", clue: "The bar is not Uptown Social" },
+      { level: "hard", q: "Josh’s Favorite NFL Player", a: "devonta smith", clue: "The bar has a good view" },
+      { level: "hard", q: "Josh’s Favorite Seasonal Drink", a: "eggnog", clue: "The bar has games" },
     ];
 
     function renderQuestions() {

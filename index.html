@@ -10,6 +10,7 @@
       background-color: #f5f5f5;
       margin: 0;
       padding: 20px;
+      overflow-x: hidden;
     }
     .section-title {
       margin-top: 40px;
@@ -36,7 +37,6 @@
       background: black;
       color: white;
       z-index: 9999;
-      display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
@@ -66,6 +66,7 @@
   <div id="quiz"></div>
   <button onclick="checkAnswers()">Submit Answers</button>
 
+  <!-- 🎉 Final Reveal Overlay -->
   <div id="final-reveal">
     <canvas id="confetti"></canvas>
     <h1>🎉 FINAL DESTINATION 🎉</h1>
@@ -155,8 +156,16 @@
 
     // dramatic reveal
     function triggerFinalReveal() {
-      document.body.innerHTML = document.getElementById("final-reveal").outerHTML;
-      document.getElementById("final-reveal").style.display = "flex";
+      // hide quiz content
+      document.getElementById("quiz").style.display = "none";
+      document.querySelector("button").style.display = "none";
+      document.querySelector("h1").style.display = "none";
+
+      // show overlay
+      const final = document.getElementById("final-reveal");
+      final.style.display = "flex";
+
+      // start confetti and sound
       startConfetti();
       document.getElementById("victory-sound").play();
     }
